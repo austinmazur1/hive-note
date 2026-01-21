@@ -1,8 +1,8 @@
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
-const GuestAuthButton = () => {
+const GuestAuthButton = ({ onPress }: { onPress: () => void }) => {
   return (
-    <TouchableOpacity style={styles.guestButton}>
+    <TouchableOpacity style={styles.guestButton} onPress={onPress}>
       <Text style={styles.guestButtonText}>Continue as guest</Text>
     </TouchableOpacity>
   );

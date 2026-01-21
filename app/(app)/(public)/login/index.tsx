@@ -13,6 +13,10 @@ export default function Login() {
   const handleSignUp = () => {
     router.replace('/');
   };
+// TODO: Replace 
+  const handleGuestAuth = () => {
+    router.replace('/home');
+  };
 
   return (
     <View style={styles.container}>
@@ -36,7 +40,7 @@ export default function Login() {
             <GoogleAuthButton />
           </Animated.View>
           <Animated.View entering={FadeInDown.delay(300)}>
-            <GuestAuthButton />
+            <GuestAuthButton onPress={handleGuestAuth}/>
           </Animated.View>
         </View>
 
