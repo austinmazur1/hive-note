@@ -1,8 +1,36 @@
+import { supabaseServer } from "@/lib/supabase-server";
 import { getLinkPreview } from "link-preview-js";
 
+// If url, then we getLinkPreview
+// If an image, then we save to supabase storage and get the public url
+// Then we save to supabase database
+// Return success to client
 
-export async function GET(request: Request) {
-    const preview = await getLinkPreview("https://www.youtube.com/watch?v=MejbOFk7H6c");
-    console.debug(preview);
-    return Response.json({ preview });
+export async function POST(request: Request) {
+    let preview: any;
+    if (!request.body) {
+        return Response.json({ error: "No body" }, { status: 400 });
+    }
+
+    const body = await request.json();
+    const isScreenshot = body.type === "screenshot";
+
+    if (!isScreenshot) {
+        preview = await getLinkPreview(body.content);
+    } 
+
+    const { data, error } = await supabaseServer
+        .from('items')
+        .insert({
+            ...body,
+            content: preview,
+            image: isScreenshot ? body.content : preview.images[0] ,
+        })
+        .select()
+        .single()
+    if (error) {
+        console.error('error', error);
+        return Response.json({ error: error.message }, { status: 500 });
+    }
+    return Response.json({ success: true });
 }

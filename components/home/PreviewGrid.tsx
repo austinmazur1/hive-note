@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { FlatList, Pressable, StyleSheet, useWindowDimensions } from "react-native";
+import { FlatList, Linking, Pressable, StyleSheet, useWindowDimensions } from "react-native";
 
 const GAP = 12;
 const HORIZONTAL_PADDING = 16;
@@ -10,7 +10,7 @@ export interface PreviewGridProps {
     onRefresh?: () => void;
     isLoading?: boolean;
 }
-
+// TODO: Replace with Flashlist or LegendList
 export const PreviewGrid = ({ items, onItemPress, onRefresh, isLoading }: PreviewGridProps) => {
     const { width } = useWindowDimensions();
     const itemWidth = (width - HORIZONTAL_PADDING * 2 - GAP) / 2;
@@ -23,15 +23,19 @@ export const PreviewGrid = ({ items, onItemPress, onRefresh, isLoading }: Previe
             contentContainerStyle={styles.contentContainer}
             columnWrapperStyle={styles.columnWrapper}
             renderItem={({ item }) => {
-                console.log("ITEM", item);
                 return (
                 <Pressable
                     style={[styles.itemContainer, { width: itemWidth, height: itemWidth }]}
-                    onPress={() => onItemPress(item.url)}
+                    onPress={() => {
+                        if (item.type === "screenshot") {
+                            Linking.openURL(item.image);
+                            return;
+                        }
+                        onItemPress(item.content.url)}}
                 >
                     <Image
                         style={styles.itemImage}
-                        source={{ uri: item.images[0] }}
+                        source={{ uri: item.image}}
                         placeholder={{ blurhash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj' }}
                         contentFit="cover"
                         transition={1000}
@@ -56,6 +60,11 @@ const styles = StyleSheet.create({
         paddingTop: 16,
         paddingBottom: 100,
         gap: GAP,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     columnWrapper: {
         justifyContent: 'space-between',
