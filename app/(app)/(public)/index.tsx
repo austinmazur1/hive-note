@@ -14,6 +14,10 @@ export default function Index() {
     router.replace('/login');
   };
 
+  const handleGuestAuth = () => {
+    router.replace('/home');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
@@ -36,7 +40,7 @@ export default function Index() {
             <GoogleAuthButton />
           </Animated.View>
           <Animated.View entering={FadeInDown.delay(300)}>
-            <GuestAuthButton />
+            <GuestAuthButton onPress={handleGuestAuth}/>
           </Animated.View>
         </View>
 

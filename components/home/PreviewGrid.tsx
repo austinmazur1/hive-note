@@ -14,7 +14,6 @@ export interface PreviewGridProps {
 export const PreviewGrid = ({ items, onItemPress, onRefresh, isLoading }: PreviewGridProps) => {
     const { width } = useWindowDimensions();
     const itemWidth = (width - HORIZONTAL_PADDING * 2 - GAP) / 2;
-    console.log("ITEMS", typeof items);
 
     return (
         <FlatList
@@ -69,7 +68,6 @@ const styles = StyleSheet.create({
     itemImage: {
         flex: 1,
         width: '100%',
-        // height: '100%',
         backgroundColor: '#0553',
     },
 });

@@ -1,6 +1,7 @@
 import { AddItemFab } from "@/components/home/AddItemFab";
 import { PreviewGrid } from "@/components/home/PreviewGrid";
 import { SearchBar } from "@/components/home/SearchBar";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Linking, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -30,16 +31,14 @@ export default function Home() {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <PreviewGrid
-        // items={MOCK_ITEMS}
         items={previewItems || []}
         onItemPress={(id) => {
           Linking.openURL(id);
-          fetchPreviewItems();
-          console.log('Pressed:', id)}}
+        }}
       />
       <View style={styles.searchBarContent}>
         <SearchBar placeholder="Search" onChangeText={(text) => console.log('Search text:', text)} />
-        <AddItemFab onPress={() => console.log('Add item')} />
+        <AddItemFab onPress={() => router.push("/(app)/(auth)/(modal)/(items)/new-item")} />
       </View>
     </View>
   );
