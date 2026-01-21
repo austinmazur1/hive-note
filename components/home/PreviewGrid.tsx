@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import { FlatList, Pressable, StyleSheet, useWindowDimensions } from "react-native";
 
 const GAP = 12;
@@ -13,6 +14,7 @@ export interface PreviewGridProps {
 export const PreviewGrid = ({ items, onItemPress, onRefresh, isLoading }: PreviewGridProps) => {
     const { width } = useWindowDimensions();
     const itemWidth = (width - HORIZONTAL_PADDING * 2 - GAP) / 2;
+    console.log("ITEMS", typeof items);
 
     return (
         <FlatList
@@ -21,15 +23,23 @@ export const PreviewGrid = ({ items, onItemPress, onRefresh, isLoading }: Previe
             style={styles.list}
             contentContainerStyle={styles.contentContainer}
             columnWrapperStyle={styles.columnWrapper}
-            renderItem={({ item }) => (
+            renderItem={({ item }) => {
+                console.log("ITEM", item);
+                return (
                 <Pressable
                     style={[styles.itemContainer, { width: itemWidth, height: itemWidth }]}
-                    onPress={() => onItemPress(item.id)}
+                    onPress={() => onItemPress(item.url)}
                 >
-                    {/* Preview content will go here */}
+                    <Image
+                        style={styles.itemImage}
+                        source={{ uri: item.images[0] }}
+                        placeholder={{ blurhash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj' }}
+                        contentFit="cover"
+                        transition={1000}
+                    />
                 </Pressable>
-            )}
-            keyExtractor={(item) => item.id}
+            )}}
+            keyExtractor={(item) => item.url || item.id}
             onRefresh={onRefresh}
             refreshing={isLoading ?? false}
             showsVerticalScrollIndicator={false}
@@ -55,5 +65,11 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         backgroundColor: '#E5E5E5',
         overflow: 'hidden',
+    },
+    itemImage: {
+        flex: 1,
+        width: '100%',
+        // height: '100%',
+        backgroundColor: '#0553',
     },
 });
