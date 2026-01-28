@@ -1,6 +1,6 @@
-import { AddItemFab } from "@/components/home/AddItemFab";
-import { PreviewGrid } from "@/components/home/PreviewGrid";
-import { SearchBar } from "@/components/home/SearchBar";
+import { AddItemFab } from "@/features/home/components/add-item-fab";
+import { PreviewGrid } from "@/features/home/components/preview-grid";
+import { SearchBar } from "@/features/home/components/search-bar";
 import { supabase } from "@/lib/supabase";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
@@ -16,11 +16,9 @@ export default function Home() {
   const insets = useSafeAreaInsets();
 
   const fetchPreviewItems = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('items')
-      .select('*')
+    const { data, error } = await supabase.from("items").select("*");
     if (error) {
-      console.error('error', error);
+      console.error("error", error);
     }
     setPreviewItems(data || []);
   }, []);
@@ -28,8 +26,8 @@ export default function Home() {
   useFocusEffect(
     useCallback(() => {
       fetchPreviewItems();
-    }, [fetchPreviewItems])
-  )
+    }, [fetchPreviewItems]),
+  );
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -40,8 +38,13 @@ export default function Home() {
         }}
       />
       <View style={styles.searchBarContent}>
-        <SearchBar placeholder="Search" onChangeText={(text) => console.log('Search text:', text)} />
-        <AddItemFab onPress={() => router.push("/(app)/(auth)/(modal)/(items)/new-item")} />
+        <SearchBar
+          placeholder="Search"
+          onChangeText={(text) => console.log("Search text:", text)}
+        />
+        <AddItemFab
+          onPress={() => router.push("/(app)/(auth)/(modal)/(items)/new-item")}
+        />
       </View>
     </View>
   );
@@ -50,18 +53,18 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   searchBarContent: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
     paddingHorizontal: 16,
     paddingVertical: 16,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
 });
