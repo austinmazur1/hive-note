@@ -10,6 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
+      "usesAppleSignIn": true,
       "bundleIdentifier": "com.austinmazur.hivenote",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -45,7 +46,8 @@
         }
       ],
       "expo-secure-store",
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-share-intent"
     ],
     "experiments": {
       "typedRoutes": true,
