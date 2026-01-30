@@ -1,15 +1,13 @@
+import { Text } from "@/components/ui/text";
 import { Fonts } from "@/constants/theme";
 import GoogleAuthButton from "@/features/auth/components/GoogleAuthButton";
 import GuestAuthButton from "@/features/auth/components/GuestAuthButton";
 import AppleSignInButton from "@/features/auth/components/social-buttons/apple/apple-sign-in-button.ios";
 import { router } from "expo-router";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export function SignUpScreen() {
-  const insets = useSafeAreaInsets();
-
   const handleLogIn = () => {
     router.replace("/login");
   };
@@ -19,19 +17,19 @@ export function SignUpScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.contentContainer}>
-        <View style={styles.headerSection}>
+    <View className="flex-1">
+      <View className="flex-1 px-6">
+        <View className="flex-1 justify-center items-center pt-10">
           <Image
             source={require("@/assets/images/hive-note-logo-1.png")}
             style={styles.brandLogo}
           />
-          <Animated.Text entering={FadeInDown} style={styles.tagline}>
+          <Animated.Text entering={FadeInDown} className="text-2xl font-poppins text-center leading-8 px-10">
             One space for everything that inspires you.
           </Animated.Text>
         </View>
 
-        <View style={styles.buttonSection}>
+        <View className="gap-3 w-full pb-6">
           <Animated.View entering={FadeInDown.delay(100)}>
             <AppleSignInButton />
           </Animated.View>
@@ -44,15 +42,12 @@ export function SignUpScreen() {
         </View>
 
         <Animated.View
-          style={[
-            styles.footerSection,
-            { paddingBottom: Math.max(insets.bottom, 24) },
-          ]}
+          className="items-center pt-4 pb-safe"
           entering={FadeInDown.delay(400)}
         >
-          <Text style={styles.footerText}>
+          <Text className="text-sm text-gray-500">
             Already have an account?{" "}
-            <Text style={styles.footerLink} onPress={handleLogIn}>
+            <Text className="text-blue-500 font-medium" onPress={handleLogIn}>
               Log in
             </Text>
           </Text>
@@ -63,19 +58,6 @@ export function SignUpScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentContainer: {
-    flex: 1,
-    paddingHorizontal: 30,
-  },
-  headerSection: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingTop: 40,
-  },
   brandLogo: {
     width: "100%",
     height: 180,
@@ -83,28 +65,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   tagline: {
-    fontSize: 20,
     fontFamily: Fonts.poppins,
-    textAlign: "center",
-    lineHeight: 32,
-    paddingHorizontal: 10,
-  },
-  buttonSection: {
-    gap: 12,
-    width: "100%",
-    paddingBottom: 24,
-  },
-  footerSection: {
-    alignItems: "center",
-    paddingTop: 16,
-  },
-  footerText: {
-    fontSize: 14,
-    color: "#888",
-    textAlign: "center",
-  },
-  footerLink: {
-    color: "#4285F4",
-    fontWeight: "500",
   },
 });

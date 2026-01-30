@@ -1,18 +1,18 @@
-import { Fonts } from "@/constants/theme";
+import { cn } from "@/lib/utils";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useShareIntentContext } from "expo-share-intent";
 import { useEffect, useState } from "react";
 import {
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
 type InputType = "link" | "screenshot";
@@ -90,31 +90,29 @@ export function NewItemScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+    className="flex-1"
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View style={styles.scrollView}>
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()} style={styles.headerButton}>
-            <Text style={styles.cancelText}>Cancel</Text>
+      <View className="flex-1">
+        <View className="flex-row items-center justify-between px-4 py-4 border-b border-gray-200">
+          <Pressable onPress={() => router.back()} >
+            <Text className="text-lg font-medium">Cancel</Text>
           </Pressable>
-          <Text style={styles.headerTitle}>New Item</Text>
+          <Text className="text-lg font-medium">New Item</Text>
           <Pressable
             onPress={handleSave}
-            style={[styles.headerButton, !canSave && styles.disabledButton]}
+            className={cn(!canSave && "opacity-50")}
             disabled={!canSave}
           >
-            <Text style={[styles.saveText, !canSave && styles.disabledText]}>
+            <Text className={cn(!canSave && "text-gray-500", "text-lg font-medium")}>
               Save
             </Text>
           </Pressable>
         </View>
-        <View style={styles.typeSelector}>
+        <View 
+        className="flex-row items-center bg-gray-100 p-1 rounded-md gap-2 mt-6 mx-4">
           <Pressable
-            style={[
-              styles.typeOption,
-              inputType === "link" && styles.typeOptionActive,
-            ]}
+            className={cn("flex-1 flex-row items-center justify-center gap-2 rounded-md p-3",inputType === "link" && "bg-black")}
             onPress={() => setInputType("link")}
           >
             <Ionicons
@@ -123,19 +121,13 @@ export function NewItemScreen() {
               color={inputType === "link" ? "#fff" : "#666"}
             />
             <Text
-              style={[
-                styles.typeOptionText,
-                inputType === "link" && styles.typeOptionTextActive,
-              ]}
+              className={cn("text-sm font-medium",inputType === "link" && "text-white")}
             >
               Link
             </Text>
           </Pressable>
           <Pressable
-            style={[
-              styles.typeOption,
-              inputType === "screenshot" && styles.typeOptionActive,
-            ]}
+          className={cn("flex-1 flex-row items-center justify-center gap-2 rounded-md p-3",inputType === "screenshot" && "bg-black")}
             onPress={() => setInputType("screenshot")}
           >
             <Ionicons
@@ -144,25 +136,23 @@ export function NewItemScreen() {
               color={inputType === "screenshot" ? "#fff" : "#666"}
             />
             <Text
-              style={[
-                styles.typeOptionText,
-                inputType === "screenshot" && styles.typeOptionTextActive,
-              ]}
+              className={cn("text-sm font-medium",inputType === "screenshot" && "text-white")}
             >
               Screenshot
             </Text>
           </Pressable>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>
+        <View className="mt-8 px-4">
+          <Text className="font-medium mb-2 text-gray-500">
             {inputType === "link" ? "Paste URL" : "Upload Screenshot"}
           </Text>
 
           {inputType === "link" ? (
-            <View style={styles.linkInputContainer}>
+            <View 
+            className="flex-row items-center bg-gray-100 p-2 rounded-md gap-2">
               <Ionicons name="globe-outline" size={20} color="#999" />
               <TextInput
-                style={styles.linkInput}
+                className="flex-1 text-base items-center"
                 placeholder="https://example.com"
                 placeholderTextColor="#999"
                 value={link}
@@ -178,28 +168,32 @@ export function NewItemScreen() {
               )}
             </View>
           ) : (
-            <Pressable style={styles.imagePickerContainer} onPress={pickImage}>
+            <Pressable 
+            className="rounded-md overflow-hidden"
+            onPress={pickImage}>
               {screenshot ? (
-                <View style={styles.screenshotPreview}>
+                <View className="relative">
                   <Image
                     source={{ uri: screenshot }}
                     style={styles.screenshotImage}
                   />
                   <Pressable
-                    style={styles.removeImageButton}
+                  className="absolute top-2 right-2 rounded-full p-2"
                     onPress={() => setScreenshot(null)}
                   >
                     <Ionicons name="close-circle" size={24} color="#fff" />
                   </Pressable>
                 </View>
               ) : (
-                <View style={styles.imagePlaceholder}>
+                <View 
+                className="bg-gray-100 rounded-md border-2 border-gray-200 border-dashed py-16 items-center justify-center gap-2"
+                >
                   <Ionicons
                     name="cloud-upload-outline"
                     size={40}
                     color="#999"
                   />
-                  <Text style={styles.imagePlaceholderText}>
+                  <Text className="text-sm font-medium text-gray-400">
                     Tap to select an image
                   </Text>
                 </View>
@@ -207,12 +201,13 @@ export function NewItemScreen() {
             </Pressable>
           )}
         </View>
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Tags</Text>
-          <View style={styles.tagInputContainer}>
+        <View
+        className="mt-8 px-4">
+          <Text className="font-medium mb-2 text-gray-500">Tags</Text>
+          <View className="flex-row items-center gap-2 bg-gray-100 p-2 rounded-md">
             <Ionicons name="pricetag-outline" size={20} color="#999" />
             <TextInput
-              style={styles.tagInput}
+              className="flex-1 text-base"
               placeholder="Add a tag..."
               placeholderTextColor="#999"
               value={tagInput}
@@ -222,21 +217,21 @@ export function NewItemScreen() {
               autoCapitalize="none"
             />
             {tagInput.length > 0 && (
-              <Pressable onPress={addTag} style={styles.addTagButton}>
-                <Text style={styles.addTagButtonText}>Add</Text>
+              <Pressable onPress={addTag} className="bg-black p-2 rounded-md">
+                <Text className="text-sm font-medium text-white">Add</Text>
               </Pressable>
             )}
           </View>
 
           {tags.length > 0 && (
-            <View style={styles.tagsContainer}>
+            <View className="flex-row flex-wrap gap-2 mt-2">
               {tags.map((tag) => (
                 <Pressable
                   key={tag}
-                  style={styles.tag}
+                  className="flex-row items-center gap-2 bg-gray-100 p-2 rounded-md"
                   onPress={() => removeTag(tag)}
                 >
-                  <Text style={styles.tagText}>{tag}</Text>
+                  <Text className="text-sm font-medium">{tag}</Text>
                   <Ionicons name="close" size={14} color="#666" />
                 </Pressable>
               ))}
@@ -249,183 +244,10 @@ export function NewItemScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 40,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
-  },
-  headerButton: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontFamily: Fonts.poppinsSemiBold,
-    color: "#000",
-  },
-  cancelText: {
-    fontSize: 16,
-    fontFamily: Fonts.poppins,
-    color: "#666",
-  },
-  saveText: {
-    fontSize: 16,
-    fontFamily: Fonts.poppinsSemiBold,
-    color: "#007AFF",
-  },
-  disabledButton: {
-    opacity: 0.5,
-  },
-  disabledText: {
-    color: "#999",
-  },
-  typeSelector: {
-    flexDirection: "row",
-    marginHorizontal: 16,
-    marginTop: 20,
-    backgroundColor: "#F5F5F5",
-    borderRadius: 12,
-    padding: 4,
-  },
-  typeOption: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    paddingVertical: 12,
-    borderRadius: 10,
-  },
-  typeOptionActive: {
-    backgroundColor: "#000",
-  },
-  typeOptionText: {
-    fontSize: 15,
-    fontFamily: Fonts.poppinsMedium,
-    color: "#666",
-  },
-  typeOptionTextActive: {
-    color: "#fff",
-  },
-  section: {
-    marginTop: 24,
-    paddingHorizontal: 16,
-  },
-  sectionLabel: {
-    fontSize: 14,
-    fontFamily: Fonts.poppinsMedium,
-    color: "#666",
-    marginBottom: 10,
-  },
-  linkInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#F5F5F5",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    gap: 10,
-  },
-  linkInput: {
-    flex: 1,
-    fontSize: 16,
-    fontFamily: Fonts.poppins,
-    color: "#000",
-  },
-  imagePickerContainer: {
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  imagePlaceholder: {
-    backgroundColor: "#F5F5F5",
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: "#E0E0E0",
-    borderStyle: "dashed",
-    paddingVertical: 48,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-  },
-  imagePlaceholderText: {
-    fontSize: 14,
-    fontFamily: Fonts.poppins,
-    color: "#999",
-  },
-  screenshotPreview: {
-    position: "relative",
-  },
   screenshotImage: {
     width: "100%",
     height: 200,
     borderRadius: 12,
     resizeMode: "cover",
-  },
-  removeImageButton: {
-    position: "absolute",
-    top: 8,
-    right: 8,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    borderRadius: 12,
-  },
-  tagInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#F5F5F5",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    gap: 10,
-  },
-  tagInput: {
-    flex: 1,
-    fontSize: 16,
-    fontFamily: Fonts.poppins,
-    color: "#000",
-  },
-  addTagButton: {
-    backgroundColor: "#000",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  addTagButtonText: {
-    fontSize: 14,
-    fontFamily: Fonts.poppinsMedium,
-    color: "#fff",
-  },
-  tagsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-    marginTop: 12,
-  },
-  tag: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#F0F0F0",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    gap: 6,
-  },
-  tagText: {
-    fontSize: 14,
-    fontFamily: Fonts.poppins,
-    color: "#333",
   },
 });

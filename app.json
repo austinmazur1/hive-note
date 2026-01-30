@@ -14,7 +14,8 @@
       "bundleIdentifier": "com.austinmazur.hivenote",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
-      }
+      },
+      "appleTeamId": "Z2G66BR5PG"
     },
     "android": {
       "adaptiveIcon": {
@@ -56,7 +57,24 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "a55761d8-c0ac-473b-8a33-3d7cf6e3fdaf"
+        "projectId": "a55761d8-c0ac-473b-8a33-3d7cf6e3fdaf",
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "ShareExtension",
+                  "bundleIdentifier": "com.austinmazur.hivenote.share-extension",
+                  "entitlements": {
+                    "com.apple.security.application-groups": [
+                      "group.com.austinmazur.hivenote"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
       }
     }
   }

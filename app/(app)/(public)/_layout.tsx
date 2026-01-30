@@ -4,11 +4,11 @@ const Layout = () => {
     <Stack>
       <Stack.Screen
         name="index"
-        options={{ headerShown: false, contentStyle: { backgroundColor: '#fff' } }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="login/index"
-        options={{ headerShown: false, contentStyle: { backgroundColor: '#fff' } }}
+        options={{ headerShown: false }}
       />
     </Stack>
   );
