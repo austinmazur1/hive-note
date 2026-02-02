@@ -57,24 +57,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "a55761d8-c0ac-473b-8a33-3d7cf6e3fdaf",
-        "build": {
-          "experimental": {
-            "ios": {
-              "appExtensions": [
-                {
-                  "targetName": "ShareExtension",
-                  "bundleIdentifier": "com.austinmazur.hivenote.share-extension",
-                  "entitlements": {
-                    "com.apple.security.application-groups": [
-                      "group.com.austinmazur.hivenote"
-                    ]
-                  }
-                }
-              ]
-            }
-          }
-        }
+        "projectId": "a55761d8-c0ac-473b-8a33-3d7cf6e3fdaf"
       }
     }
   }
