@@ -1,9 +1,3 @@
-import { Text, View } from "react-native";
+import { CollectionsScreen } from "@/features/collections/components/collections-screen";
 
-export default function Collections() {
-  return (
-    <View>
-      <Text>Collections</Text>
-    </View>
-  );
-}
+export default CollectionsScreen;

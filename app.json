@@ -10,10 +10,12 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
+      "usesAppleSignIn": true,
       "bundleIdentifier": "com.austinmazur.hivenote",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
-      }
+      },
+      "appleTeamId": "Z2G66BR5PG"
     },
     "android": {
       "adaptiveIcon": {
@@ -45,7 +47,8 @@
         }
       ],
       "expo-secure-store",
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-share-intent"
     ],
     "experiments": {
       "typedRoutes": true,

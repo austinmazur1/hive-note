@@ -1,9 +1,3 @@
-import { Text, View } from "react-native";
+import { SettingsScreen } from "@/features/settings/components/settings-screen";
 
-export default function Settings() {
-  return (
-    <View>
-      <Text>Settings</Text>
-    </View>
-  );
-}
+export default SettingsScreen;
