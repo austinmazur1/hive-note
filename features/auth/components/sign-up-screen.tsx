@@ -1,24 +1,57 @@
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Text } from "@/components/ui/text";
 import { Fonts } from "@/constants/theme";
-import GoogleAuthButton from "@/features/auth/components/GoogleAuthButton";
-import GuestAuthButton from "@/features/auth/components/GuestAuthButton";
-import AppleSignInButton from "@/features/auth/components/social-buttons/apple/apple-sign-in-button.ios";
+import { useSignUp } from '@clerk/clerk-expo';
 import { router } from "expo-router";
-import { Image, StyleSheet, View } from "react-native";
+import { useRef, useState } from "react";
+import { type TextInput, Image, StyleSheet, View } from "react-native";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { SocialConnections } from "./social-connections";
 
 export function SignUpScreen() {
+  const { signUp, isLoaded } = useSignUp();
+  const [error, setError] = useState<{ email?: string; password?: string }>({});
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const passwordInputRef = useRef<TextInput>(null);
+
+  const onEmailSubmitEditing = () => {
+    passwordInputRef.current?.focus();
+  }
+
   const handleLogIn = () => {
-    router.replace("/login");
+    router.replace("/");
   };
 
-  const handleGuestAuth = () => {
-    router.replace("/home");
+  const onSubmit = async () => {
+    if (!isLoaded) return;
+
+    try {
+      await signUp.create({
+        emailAddress: email,
+        password,
+      });
+
+      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+
+      router.push(`/(app)/(public)/sign-up/verify-email?email=${encodeURIComponent(email)}`);
+    } catch (err) {
+      if (err instanceof Error) {
+        const isEmailMessage =
+          err.message.toLowerCase().includes('identifier') ||
+          err.message.toLowerCase().includes('email');
+        setError(isEmailMessage ? { email: err.message } : { password: err.message });
+        return;
+      }
+      console.error(JSON.stringify(err, null, 2));
+    }
   };
 
   return (
-    <View className="flex-1">
-      <View className="flex-1 px-6">
+      <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 16 }}>
         <View className="flex-1 justify-center items-center pt-10">
           <Image
             source={require("@/assets/images/hive-note-logo-1.png")}
@@ -29,16 +62,51 @@ export function SignUpScreen() {
           </Animated.Text>
         </View>
 
-        <View className="gap-3 w-full pb-6">
-          <Animated.View entering={FadeInDown.delay(100)}>
-            <AppleSignInButton />
-          </Animated.View>
-          <Animated.View entering={FadeInDown.delay(200)}>
-            <GoogleAuthButton />
-          </Animated.View>
-          <Animated.View entering={FadeInDown.delay(300)}>
-            <GuestAuthButton onPress={handleGuestAuth} />
-          </Animated.View>
+        <View className="gap-6 w-full pb-6">
+          <View className="gap-1.5">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              placeholder="m@example.com"
+              keyboardType="email-address"
+              autoComplete="email"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
+              onSubmitEditing={onEmailSubmitEditing}
+              returnKeyType="next"
+              submitBehavior="submit"
+            />
+            {error.email ? (
+              <Text className="text-sm font-medium text-destructive">{error.email}</Text>
+            ) : null}
+          </View>
+          <View className="gap-1.5">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              ref={passwordInputRef}
+              id="password"
+              placeholder="Choose a password"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+              returnKeyType="send"
+              onSubmitEditing={onSubmit}
+            />
+            {error.password ? (
+              <Text className="text-sm font-medium text-destructive">{error.password}</Text>
+            ) : null}
+          </View>
+          <Button className="w-full" onPress={onSubmit}>
+            <Text>Continue</Text>
+          </Button>
+
+          <View className="flex-row items-center gap-3 w-full py-2">
+            <View className="flex-1 h-px bg-border" />
+            <Text className="text-sm text-muted-foreground">or</Text>
+            <View className="flex-1 h-px bg-border" />
+          </View>
+          <SocialConnections />
         </View>
 
         <Animated.View
@@ -52,8 +120,7 @@ export function SignUpScreen() {
             </Text>
           </Text>
         </Animated.View>
-      </View>
-    </View>
+      </KeyboardAwareScrollView>
   );
 }
 
