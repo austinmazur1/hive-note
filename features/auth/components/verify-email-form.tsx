@@ -7,6 +7,7 @@ import { useSignUp } from '@clerk/clerk-expo';
 import { router, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
 import { type TextStyle, View } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 const RESEND_CODE_INTERVAL_SECONDS = 30;
 
@@ -65,7 +66,7 @@ export function VerifyEmailForm() {
   }
 
   return (
-    <View className="gap-6">
+    <KeyboardAvoidingView behavior="padding" className="gap-6">
       <Card className="border-border/0 shadow-none sm:border-border sm:shadow-sm sm:shadow-black/5">
         <CardHeader>
           <CardTitle className="text-center text-xl sm:text-left">Verify your email</CardTitle>
@@ -81,7 +82,7 @@ export function VerifyEmailForm() {
                 id="code"
                 autoCapitalize="none"
                 onChangeText={setCode}
-                returnKeyType="send"
+                // returnKeyType="send"
                 keyboardType="numeric"
                 autoComplete="sms-otp"
                 textContentType="oneTimeCode"
@@ -112,7 +113,7 @@ export function VerifyEmailForm() {
           </View>
         </CardContent>
       </Card>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

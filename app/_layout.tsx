@@ -5,6 +5,7 @@ import { NAV_THEME } from '@/lib/theme';
 
 import { ClerkProvider } from '@clerk/clerk-expo';
 import { tokenCache } from '@clerk/clerk-expo/token-cache';
+import { PortalHost } from '@rn-primitives/portal';
 
 import { ConcertOne_400Regular } from "@expo-google-fonts/concert-one";
 import { Modak_400Regular } from "@expo-google-fonts/modak";
@@ -62,10 +63,9 @@ export default function RootLayout() {
             }),
         }}
       >
-        {/* <AuthProvider> */}
           <SplashScreenController />
           <Slot />
-        {/* </AuthProvider> */}
+          <PortalHost />
       </ShareIntentProvider>
       </KeyboardProvider>
     </GestureHandlerRootView>
