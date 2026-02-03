@@ -1,7 +1,7 @@
 import { AddItemFab } from "@/features/home/components/add-item-fab";
 import { PreviewGrid } from "@/features/home/components/preview-grid";
 import { SearchBar } from "@/features/home/components/search-bar";
-import { supabase } from "@/lib/supabase";
+import { useSupabase } from "@/lib/supabase";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { Linking, View } from "react-native";
@@ -13,7 +13,7 @@ import { KeyboardStickyView } from "react-native-keyboard-controller";
 // TODO: Replace callback with tanstack query
 
 export function HomeScreen() {
-
+  const supabase = useSupabase();
   const [previewItems, setPreviewItems] = useState<any[]>([]);
 
   const fetchPreviewItems = useCallback(async () => {

@@ -2,6 +2,10 @@ import '@/global.css';
 
 import { SplashScreenController } from "@/components/splash-screen-controller";
 import { NAV_THEME } from '@/lib/theme';
+
+import { ClerkProvider } from '@clerk/clerk-expo';
+import { tokenCache } from '@clerk/clerk-expo/token-cache';
+
 import { ConcertOne_400Regular } from "@expo-google-fonts/concert-one";
 import { Modak_400Regular } from "@expo-google-fonts/modak";
 import {
@@ -14,7 +18,7 @@ import { Slot, useRouter } from "expo-router";
 import { ShareIntentProvider } from "expo-share-intent";
 import { useColorScheme } from 'nativewind';
 
-import AuthProvider from "@/providers/auth-provider";
+// import AuthProvider from "@/providers/auth-provider";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 
@@ -43,8 +47,8 @@ export default function RootLayout() {
   }
 
   return (
+    <ClerkProvider tokenCache={tokenCache}>
     <ThemeProvider value={NAV_THEME[colorScheme ?? 'dark']}>
-    {/* <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}> */}
     <GestureHandlerRootView style={{ flex: 1 }}>
       <KeyboardProvider>
       <ShareIntentProvider
@@ -58,13 +62,14 @@ export default function RootLayout() {
             }),
         }}
       >
-        <AuthProvider>
+        {/* <AuthProvider> */}
           <SplashScreenController />
           <Slot />
-        </AuthProvider>
+        {/* </AuthProvider> */}
       </ShareIntentProvider>
       </KeyboardProvider>
     </GestureHandlerRootView>
     </ThemeProvider>
+    </ClerkProvider>
   );
 }

@@ -1,15 +1,15 @@
-import SignOutButton from "@/features/auth/components/social-buttons/sign-out-button";
-import { useAuthContext } from "@/features/auth/hooks/use-auth-context";
+import SignOutButton from "@/features/auth/components/sign-out-button";
+import { useUser } from "@clerk/clerk-expo";
 import { StyleSheet, Text, View } from "react-native";
 
 export function SettingsScreen() {
-  const { session, profile } = useAuthContext();
+  const { user } = useUser();
+  console.log('user', user);
 
   return (
     <View style={styles.container}>
       <Text>Settings</Text>
-      <Text>{session?.user.email}</Text>
-      <Text>{profile?.full_name}</Text>
+      <Text className="text-sm text-gray-500">{user?.emailAddresses[0]?.emailAddress}</Text>
       <SignOutButton />
     </View>
   );

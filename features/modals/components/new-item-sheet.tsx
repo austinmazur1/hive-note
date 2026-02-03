@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useSession } from "@clerk/clerk-expo";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
@@ -22,6 +23,7 @@ type InputType = "link" | "screenshot";
 
 // TODO: Refactor and break up into smaller components
 export function NewItemScreen() {
+  const {session} = useSession();
   const { hasShareIntent, shareIntent, error, resetShareIntent } =
     useShareIntentContext();
   const [inputType, setInputType] = useState<InputType>("link");
@@ -69,6 +71,7 @@ export function NewItemScreen() {
   };
 
   const handleSave = async () => {
+    const token = await session?.getToken();
     const item = {
       type: inputType,
       content: inputType === "link" ? link : screenshot,
@@ -76,6 +79,10 @@ export function NewItemScreen() {
     };
     const response = await fetch("/api/preview", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+      },
       body: JSON.stringify(item),
     });
     if (response.ok) {
