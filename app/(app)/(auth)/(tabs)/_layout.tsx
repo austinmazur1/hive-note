@@ -22,9 +22,10 @@ const Layout = () => {
           }}
         />
         <Tabs.Screen
-          name="collections/index"
+          name="collections"
           options={{
             title: 'Collections',
+            headerShown: false,
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'library' : 'library-outline'} color={color} size={size} />
             ),

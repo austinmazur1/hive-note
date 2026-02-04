@@ -1,29 +1,40 @@
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
+import { Text } from "@/components/ui/text";
+import { useSupabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 import { useSession } from "@clerk/clerk-expo";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useShareIntentContext } from "expo-share-intent";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Image,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   View,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 type InputType = "link" | "screenshot";
+
+type Collection = { id: string; name: string };
 
 // hasShareIntent true
 //  LOG  shareIntent {"files": null, "meta": {}, "text": "https://www.youtube.com/watch?v=qMDSJPekxBw", "type": "weburl", "webUrl": "https://www.youtube.com/watch?v=qMDSJPekxBw"}
 
 // TODO: Refactor and break up into smaller components
 export function NewItemScreen() {
-  const {session} = useSession();
+  const { session } = useSession();
+  const supabase = useSupabase();
   const { hasShareIntent, shareIntent, error, resetShareIntent } =
     useShareIntentContext();
   const [inputType, setInputType] = useState<InputType>("link");
@@ -31,6 +42,24 @@ export function NewItemScreen() {
   const [screenshot, setScreenshot] = useState<string | null>(null);
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
+  const [collections, setCollections] = useState<Collection[]>([]);
+  const [selectedCollectionIds, setSelectedCollectionIds] = useState<string[]>(
+    [],
+  );
+  const [newCollectionName, setNewCollectionName] = useState("");
+
+  const fetchCollections = useCallback(async () => {
+    const { data, error: fetchError } = await supabase
+      .from("collections")
+      .select("id, name")
+      .order("created_at", { ascending: false });
+    if (fetchError) console.error("collections fetch error", fetchError);
+    setCollections((data as Collection[]) ?? []);
+  }, [supabase]);
+
+  useEffect(() => {
+    fetchCollections();
+  }, [fetchCollections]);
 
   useEffect(() => {
     console.log("hasShareIntent", hasShareIntent);
@@ -76,6 +105,12 @@ export function NewItemScreen() {
       type: inputType,
       content: inputType === "link" ? link : screenshot,
       tags,
+      ...(selectedCollectionIds.length > 0 && {
+        collectionIds: selectedCollectionIds,
+      }),
+      ...(newCollectionName.trim() && {
+        newCollectionName: newCollectionName.trim(),
+      }),
     };
     const response = await fetch("/api/preview", {
       method: "POST",
@@ -96,16 +131,16 @@ export function NewItemScreen() {
     (inputType === "screenshot" && screenshot);
 
   return (
-    <KeyboardAvoidingView
+    <KeyboardAwareScrollView
     className="flex-1"
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    // contentContainerStyle={{ flexGrow: 1 }}
     >
       <View className="flex-1">
         <View className="flex-row items-center justify-between px-4 py-4 border-b border-gray-200">
           <Pressable onPress={() => router.back()} >
-            <Text className="text-lg font-medium">Cancel</Text>
+            <Text className="text-lg font-medium text-secondary">Cancel</Text>
           </Pressable>
-          <Text className="text-lg font-medium">New Item</Text>
+          <Text className="text-lg font-medium text-secondary">New Item</Text>
           <Pressable
             onPress={handleSave}
             className={cn(!canSave && "opacity-50")}
@@ -119,7 +154,7 @@ export function NewItemScreen() {
         <View 
         className="flex-row items-center bg-gray-100 p-1 rounded-md gap-2 mt-6 mx-4">
           <Pressable
-            className={cn("flex-1 flex-row items-center justify-center gap-2 rounded-md p-3",inputType === "link" && "bg-black")}
+            className={cn("flex-1 flex-row items-center justify-center gap-2 rounded-md p-3 text-black",inputType === "link" && "bg-black text-white")}
             onPress={() => setInputType("link")}
           >
             <Ionicons
@@ -128,7 +163,7 @@ export function NewItemScreen() {
               color={inputType === "link" ? "#fff" : "#666"}
             />
             <Text
-              className={cn("text-sm font-medium",inputType === "link" && "text-white")}
+              className={cn("text-sm font-medium text-black",inputType === "link" && "text-white")}
             >
               Link
             </Text>
@@ -143,7 +178,7 @@ export function NewItemScreen() {
               color={inputType === "screenshot" ? "#fff" : "#666"}
             />
             <Text
-              className={cn("text-sm font-medium",inputType === "screenshot" && "text-white")}
+              className={cn("text-sm font-medium text-black",inputType === "screenshot" && "text-white")}
             >
               Screenshot
             </Text>
@@ -245,8 +280,121 @@ export function NewItemScreen() {
             </View>
           )}
         </View>
+        <View className="mt-8 px-4">
+          <Text className="font-medium mb-2 text-gray-500">
+            Collections
+          </Text>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Pressable className="flex-row items-center justify-between rounded-lg border border-input bg-background px-4 py-3 min-h-[48px]">
+                <View className="flex-row items-center gap-3 flex-1 min-w-0">
+                  <Ionicons name="folder-outline" size={22} color="#999" />
+                  <Text
+                    variant="default"
+                    className={cn(
+                      selectedCollectionIds.length === 0 &&
+                        !newCollectionName.trim() &&
+                        "text-muted-foreground",
+                    )}
+                    numberOfLines={2}
+                  >
+                    {selectedCollectionIds.length === 0 &&
+                    !newCollectionName.trim()
+                      ? "Select collections..."
+                      : [
+                          ...selectedCollectionIds
+                            .map(
+                              (id) =>
+                                collections.find((c) => c.id === id)?.name,
+                            )
+                            .filter(Boolean),
+                          newCollectionName.trim() &&
+                            `New: ${newCollectionName.trim()}`,
+                        ]
+                          .filter(Boolean)
+                          .join(", ")}
+                  </Text>
+                </View>
+                <Ionicons name="chevron-down" size={20} color="#999" />
+              </Pressable>
+            </PopoverTrigger>
+            <PopoverContent
+              side="top"
+              sideOffset={8}
+              className="w-[min(100%,340px)] rounded-xl border border-border bg-popover p-0 shadow-lg"
+            >
+              <ScrollView
+                style={{ maxHeight: 320 }}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={true}
+                contentContainerStyle={{ paddingBottom: 16 }}
+              >
+                <Pressable
+                  className="flex-row items-center gap-3 px-5 py-4 active:bg-muted"
+                  onPress={() => {
+                    setSelectedCollectionIds([]);
+                    setNewCollectionName("");
+                  }}
+                >
+                  <Ionicons
+                    name="remove-circle-outline"
+                    size={22}
+                    color="#666"
+                  />
+                  <Text variant="default">Clear all</Text>
+                </Pressable>
+                <Separator />
+                {collections.length === 0 ? (
+                  <View className="px-5 py-4">
+                    <Text variant="small" className="text-muted-foreground">
+                      No collections yet. Create one below.
+                    </Text>
+                  </View>
+                ) : (
+                  collections.map((c) => {
+                    const isSelected = selectedCollectionIds.includes(c.id);
+                    return (
+                      <Pressable
+                        key={c.id}
+                        className="flex-row items-center gap-4 px-5 py-4 active:bg-muted"
+                        onPress={() =>
+                          setSelectedCollectionIds((prev) =>
+                            isSelected
+                              ? prev.filter((id) => id !== c.id)
+                              : [...prev, c.id],
+                          )
+                        }
+                      >
+                        <Ionicons
+                          name={isSelected ? "checkbox" : "square-outline"}
+                          size={24}
+                          color={isSelected ? "#000" : "#999"}
+                        />
+                        <Text variant="default" numberOfLines={1}>
+                          {c.name}
+                        </Text>
+                      </Pressable>
+                    );
+                  })
+                )}
+                <Separator />
+                <View className="px-5 py-4 gap-2 pb-6">
+                  <Text variant="small" className="text-muted-foreground">
+                    Create new collection
+                  </Text>
+                  <Input
+                    placeholder="Collection name..."
+                    value={newCollectionName}
+                    onChangeText={setNewCollectionName}
+                    className="min-h-[44px] text-base"
+                  />
+                </View>
+              </ScrollView>
+            </PopoverContent>
+          </Popover>
+        </View>
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardAwareScrollView>
   );
 }
 

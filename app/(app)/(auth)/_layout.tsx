@@ -6,7 +6,7 @@ const Layout = () => {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="(modal)/(items)/new-item" options={{
         presentation: "formSheet",
-        sheetAllowedDetents: [.75],
+        sheetAllowedDetents: [1],
         title: "New Item",
         headerShadowVisible: false,
         sheetCornerRadius: 16,

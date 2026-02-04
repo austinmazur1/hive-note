@@ -9,9 +9,10 @@ export interface PreviewGridProps {
   onItemPress: (id: string) => void;
   onRefresh?: () => void;
   isLoading?: boolean;
+  contentContainerClassName?: string;
 }
 // TODO: Replace with Flashlist or LegendList
-export const PreviewGrid = ({ items, onItemPress, onRefresh, isLoading }: PreviewGridProps) => {
+export const PreviewGrid = ({ items, onItemPress, onRefresh, isLoading, contentContainerClassName }: PreviewGridProps) => {
   const { width } = useWindowDimensions();
   const itemWidth = (width - HORIZONTAL_PADDING * 2 - GAP) / 2;
 
@@ -20,7 +21,7 @@ export const PreviewGrid = ({ items, onItemPress, onRefresh, isLoading }: Previe
       data={items}
       numColumns={2}
       className='flex-1 w-full'
-      contentContainerClassName='px-4 pt-4 pb-10 gap-3 shadow-sm shadow-black/5'
+      contentContainerClassName={contentContainerClassName ?? 'px-4 pt-4 pb-10 gap-3 shadow-sm shadow-black/5'}
       columnWrapperClassName='justify-between'
       renderItem={({ item }) => {
         return (
